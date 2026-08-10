@@ -128,6 +128,28 @@ export default function App() {
           />
         )}
       </main>
+
+      <footer style={{
+        textAlign: 'center',
+        padding: '1.5rem 1rem',
+        borderTop: '1px solid var(--border-light)',
+        fontSize: '0.85rem',
+        color: 'var(--text-muted)',
+        background: 'var(--bg-card)',
+        marginTop: '2rem'
+      }}>
+        <span>Crafted with ❤️ by </span>
+        <a
+          href="https://github.com/chinaliao"
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: 'var(--apple-blue)', fontWeight: 600, textDecoration: 'none' }}
+        >
+          chinaliao
+        </a>
+        <span style={{ margin: '0 0.5rem' }}>•</span>
+        <span>LeetCode Hot 100 极速记忆 & 艾宾浩斯刷题工坊</span>
+      </footer>
     </div>
   );
 }
