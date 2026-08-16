@@ -102,7 +102,7 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
         )}
 
         <a
-          href={`https://leetcode.cn/search/?q=${encodeURIComponent(problem.title)}`}
+          href={`https://leetcode.cn/problems/${problem.englishTitle ? problem.englishTitle.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-') : ''}/`}
           target="_blank"
           rel="noreferrer"
           className="btn-secondary"
