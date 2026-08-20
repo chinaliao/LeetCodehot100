@@ -53,9 +53,9 @@ export function StatsModal({ problems, progressMap }) {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Top Overview Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
+      <div className="stats-summary-grid">
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--apple-blue-light)', color: 'var(--apple-blue)' }}>
+          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--apple-blue-light)', color: 'var(--apple-blue)', flexShrink: 0 }}>
             <Award size={24} />
           </div>
           <div>
@@ -65,7 +65,7 @@ export function StatsModal({ problems, progressMap }) {
         </div>
 
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--color-green-bg)', color: 'var(--color-green-text)' }}>
+          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--color-green-bg)', color: 'var(--color-green-text)', flexShrink: 0 }}>
             <CheckCircle size={24} />
           </div>
           <div>
@@ -75,7 +75,7 @@ export function StatsModal({ problems, progressMap }) {
         </div>
 
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--color-orange-bg)', color: 'var(--color-orange-text)' }}>
+          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--color-orange-bg)', color: 'var(--color-orange-text)', flexShrink: 0 }}>
             <Clock size={24} />
           </div>
           <div>
@@ -85,7 +85,7 @@ export function StatsModal({ problems, progressMap }) {
         </div>
 
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--bg-subtle)', color: 'var(--text-main)' }}>
+          <div style={{ padding: '0.9rem', borderRadius: 14, background: 'var(--bg-subtle)', color: 'var(--text-main)', flexShrink: 0 }}>
             <Brain size={24} />
           </div>
           <div>
@@ -130,7 +130,7 @@ export function StatsModal({ problems, progressMap }) {
           <span>各算法大类记忆完成度</span>
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+        <div className="stats-category-grid">
           {Object.entries(stats.categoryStats).map(([catName, data]) => {
             const pct = data.total > 0 ? Math.round((data.learned / data.total) * 100) : 0;
             return (

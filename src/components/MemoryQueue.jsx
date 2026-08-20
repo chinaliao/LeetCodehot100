@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Brain, Play, CheckCircle2, Calendar, Sparkles, ArrowRight } from 'lucide-react';
+import { Brain, Play, CheckCircle2, Calendar, ArrowRight } from 'lucide-react';
 import { isProblemDueToday } from '../services/storage';
 
 export function MemoryQueue({ problems, progressMap, onStartQueueItem, onStartQueueAll }) {
@@ -48,7 +48,7 @@ export function MemoryQueue({ problems, progressMap, onStartQueueItem, onStartQu
 
         {dueProblems.length > 0 && (
           <button
-            className="btn-primary"
+            className="btn-primary memory-banner-btn"
             style={{ fontSize: '0.95rem', padding: '0.75rem 1.5rem' }}
             onClick={() => onStartQueueAll(dueProblems)}
           >

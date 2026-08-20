@@ -92,13 +92,9 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Stats Summary Bar */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '1rem'
-      }}>
+      <div className="stats-summary-grid">
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--bg-subtle)', color: 'var(--apple-blue)' }}>
+          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--bg-subtle)', color: 'var(--apple-blue)', flexShrink: 0 }}>
             <BookOpen size={20} />
           </div>
           <div>
@@ -108,7 +104,7 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
         </div>
 
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }} onClick={() => setSelectedStatus('due')}>
-          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--color-orange-bg)', color: 'var(--color-orange-text)' }}>
+          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--color-orange-bg)', color: 'var(--color-orange-text)', flexShrink: 0 }}>
             <AlertCircle size={20} />
           </div>
           <div>
@@ -118,7 +114,7 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
         </div>
 
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }} onClick={() => setSelectedStatus('learning')}>
-          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--apple-blue-light)', color: 'var(--apple-blue)' }}>
+          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--apple-blue-light)', color: 'var(--apple-blue)', flexShrink: 0 }}>
             <Clock size={20} />
           </div>
           <div>
@@ -128,7 +124,7 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
         </div>
 
         <div className="apple-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer' }} onClick={() => setSelectedStatus('mastered')}>
-          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--color-green-bg)', color: 'var(--color-green-text)' }}>
+          <div style={{ padding: '0.75rem', borderRadius: 12, background: 'var(--color-green-bg)', color: 'var(--color-green-text)', flexShrink: 0 }}>
             <CheckCircle2 size={20} />
           </div>
           <div>
@@ -144,7 +140,7 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
         {/* Top Row: Search & Status Filters */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
           
-          <div style={{ position: 'relative', flex: '1 1 300px' }}>
+          <div style={{ position: 'relative', flex: '1 1 300px', width: '100%' }}>
             <Search size={16} style={{ position: 'absolute', left: 12, top: 12, color: 'var(--text-light)' }} />
             <input
               type="text"
@@ -184,8 +180,8 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
         {/* Bottom Row: Difficulty & Category Chips */}
         <div style={{ display: 'flex', gap: '1.5rem', flexDirection: 'column', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem' }}>
           
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', marginTop: '0.4rem', fontWeight: 600 }}>难度筛选:</span>
+          <div className="filter-row">
+            <span className="filter-label">难度筛选:</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               {DIFFICULTIES.map((d) => (
                 <button
@@ -210,8 +206,8 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', marginTop: '0.4rem', fontWeight: 600 }}>题型考点:</span>
+          <div className="filter-row">
+            <span className="filter-label">题型考点:</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               {CATEGORIES.map((c) => (
                 <button

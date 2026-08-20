@@ -89,14 +89,14 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {/* Navigation Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="practice-top-bar">
         <button className="btn-secondary" onClick={onBack}>
           <ArrowLeft size={16} />
           <span>返回题目列表</span>
         </button>
 
         {queueContext && (
-          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--apple-blue)', background: 'var(--apple-blue-light)', padding: '0.3rem 0.8rem', borderRadius: '999px' }}>
+          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--apple-blue)', background: 'var(--apple-blue-light)', padding: '0.3rem 0.8rem', borderRadius: '999px', textAlign: 'center' }}>
             今日到期推送: {queueContext.currentIndex + 1} / {queueContext.totalQueue}
           </div>
         )}
