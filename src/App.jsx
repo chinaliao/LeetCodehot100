@@ -11,6 +11,32 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState('all'); // 'all' | 'memory' | 'stats' | 'practice'
   const [progressMap, setProgressMap] = useState(() => loadAllProgress());
   const [selectedProblem, setSelectedProblem] = useState(null);
+  const [lastActiveProblemId, setLastActiveProblemId] = useState(null);
+
+  // Session-scoped filter state (cleared when browser tab/window is closed)
+  const [filterState, setFilterState] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('leetcode_filter_state');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return {
+      searchTerm: '',
+      selectedDifficulty: 'all',
+      selectedCategory: 'all',
+      selectedStatus: 'all'
+    };
+  });
+
+  const handleFilterChange = (newFilters) => {
+    setFilterState(newFilters);
+    try {
+      sessionStorage.setItem('leetcode_filter_state', JSON.stringify(newFilters));
+    } catch {
+      // ignore
+    }
+  };
 
   // Queue mode state
   const [queueState, setQueueState] = useState(null); // { queue: [...], index: 0 }
@@ -37,6 +63,7 @@ export default function App() {
   // Open problem in Practice Studio
   const handleSelectProblem = (problem) => {
     setSelectedProblem(problem);
+    setLastActiveProblemId(problem.id);
     setQueueState(null);
     setCurrentTab('practice');
   };
@@ -44,6 +71,7 @@ export default function App() {
   // Start single item from queue
   const handleStartQueueItem = (queueList, index) => {
     setSelectedProblem(queueList[index]);
+    setLastActiveProblemId(queueList[index].id);
     setQueueState({ queue: queueList, index });
     setCurrentTab('practice');
   };
@@ -52,6 +80,7 @@ export default function App() {
   const handleStartQueueAll = (queueList) => {
     if (queueList.length === 0) return;
     setSelectedProblem(queueList[0]);
+    setLastActiveProblemId(queueList[0].id);
     setQueueState({ queue: queueList, index: 0 });
     setCurrentTab('practice');
   };
@@ -62,6 +91,7 @@ export default function App() {
     const nextIdx = queueState.index + 1;
     if (nextIdx < queueState.queue.length) {
       setSelectedProblem(queueState.queue[nextIdx]);
+      setLastActiveProblemId(queueState.queue[nextIdx].id);
       setQueueState({ queue: queueState.queue, index: nextIdx });
     } else {
       setQueueState(null);
@@ -86,6 +116,9 @@ export default function App() {
           <AllProblems
             problems={HOT_100_PROBLEMS}
             progressMap={progressMap}
+            filterState={filterState}
+            onFilterChange={handleFilterChange}
+            lastActiveProblemId={lastActiveProblemId}
             onSelectProblem={handleSelectProblem}
           />
         )}

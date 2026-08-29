@@ -1,13 +1,40 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Search, Filter, Clock, CheckCircle2, AlertCircle, ArrowRight, BookOpen, XCircle } from 'lucide-react';
 import { CATEGORIES, DIFFICULTIES } from '../data/categories';
 import { isProblemDueToday } from '../services/storage';
 
-export function AllProblems({ problems, progressMap, onSelectProblem }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedStatus, setSelectedStatus] = useState('all'); // 'all' | 'due' | 'unlearned' | 'learning' | 'mastered'
+export function AllProblems({
+  problems,
+  progressMap,
+  onSelectProblem,
+  filterState = { searchTerm: '', selectedDifficulty: 'all', selectedCategory: 'all', selectedStatus: 'all' },
+  onFilterChange,
+  lastActiveProblemId
+}) {
+  const {
+    searchTerm = '',
+    selectedDifficulty = 'all',
+    selectedCategory = 'all',
+    selectedStatus = 'all'
+  } = filterState;
+
+  const setSearchTerm = (term) => onFilterChange && onFilterChange({ ...filterState, searchTerm: term });
+  const setSelectedDifficulty = (diff) => onFilterChange && onFilterChange({ ...filterState, selectedDifficulty: diff });
+  const setSelectedCategory = (cat) => onFilterChange && onFilterChange({ ...filterState, selectedCategory: cat });
+  const setSelectedStatus = (status) => onFilterChange && onFilterChange({ ...filterState, selectedStatus: status });
+
+  // Auto-scroll to last practiced problem
+  useEffect(() => {
+    if (lastActiveProblemId) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(`problem-card-${lastActiveProblemId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [lastActiveProblemId]);
 
   const filteredProblems = useMemo(() => {
     return problems.filter((p) => {
@@ -75,10 +102,14 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
   const hasActiveFilters = searchTerm !== '' || selectedDifficulty !== 'all' || selectedCategory !== 'all' || selectedStatus !== 'all';
 
   const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedDifficulty('all');
-    setSelectedCategory('all');
-    setSelectedStatus('all');
+    if (onFilterChange) {
+      onFilterChange({
+        searchTerm: '',
+        selectedDifficulty: 'all',
+        selectedCategory: 'all',
+        selectedStatus: 'all'
+      });
+    }
   };
 
   const STATUS_OPTIONS = [
@@ -269,6 +300,7 @@ export function AllProblems({ problems, progressMap, onSelectProblem }) {
           return (
             <div
               key={p.id}
+              id={`problem-card-${p.id}`}
               className="apple-card apple-card-hover"
               style={{
                 cursor: 'pointer',
