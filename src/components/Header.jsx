@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
-import { BookOpen, Brain, BarChart3, Download, Upload, Sparkles, User } from 'lucide-react';
+import { BookOpen, Brain, BarChart3, Download, Upload, User } from 'lucide-react';
 import { exportBackupJSON, importBackupJSON } from '../services/storage';
+import logoImg from '../assets/logo.png';
 
 export function Header({ currentTab, setCurrentTab, dueCount, onDataImported }) {
   const fileInputRef = useRef(null);
@@ -25,19 +26,18 @@ export function Header({ currentTab, setCurrentTab, dueCount, onDataImported }) 
     <header className="app-header">
       <div className="header-top-row">
         <div className="header-brand">
-          <div style={{
-            width: 32,
-            height: 32,
-            borderRadius: 8,
-            background: 'linear-gradient(135deg, #0071e3, #42a5f5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            flexShrink: 0
-          }}>
-            <Sparkles size={18} />
-          </div>
+          <img
+            src={logoImg}
+            alt="LeetCode Hot 100 Logo"
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 8,
+              objectFit: 'contain',
+              boxShadow: '0 2px 8px rgba(0, 113, 227, 0.15)',
+              flexShrink: 0
+            }}
+          />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <span>LeetCode Hot 100</span>
