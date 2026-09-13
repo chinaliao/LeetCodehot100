@@ -322,7 +322,58 @@ body {
   flex: 1;
 }
 
-/* Code Editor Textarea */
+/* CodeMirror IDE Editor Container */
+.code-editor-container {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: #ffffff;
+  position: relative;
+}
+
+.code-editor-container .cm-theme {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.code-editor-container .cm-editor {
+  height: 100%;
+  outline: none !important;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.code-editor-container .cm-scroller {
+  font-family: var(--font-mono);
+  line-height: 1.65;
+  overflow: auto;
+  flex: 1;
+}
+
+.code-editor-container .cm-scroller::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.code-editor-container .cm-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-editor-container .cm-scroller::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+}
+
+.code-editor-container .cm-scroller::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.22);
+}
+
+/* Fallback Code Editor Textarea */
 .code-editor-textarea {
   width: 100%;
   height: 100%;
@@ -649,6 +700,7 @@ body {
     justify-content: center;
   }
 
+  .code-editor-container,
   .code-editor-textarea {
     min-height: 220px;
     font-size: 0.85rem;

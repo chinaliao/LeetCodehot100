@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Eye, EyeOff, Copy, Check, ExternalLink, Code2, FileText, Sparkles, RotateCcw } from 'lucide-react';
 import { loadUserCodeMap, saveUserCode, loadUserNotesMap, saveUserNotes, calculateSM2 } from '../services/storage';
 import { CodeBlock } from './CodeBlock';
+import { CodeEditor } from './CodeEditor';
 import confetti from 'canvas-confetti';
 
 export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queueContext }) {
@@ -29,28 +30,11 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
   }, [problem]);
 
   // Save code with debounce
-  const handleCodeChange = (e) => {
-    const val = e.target.value;
+  const handleCodeChange = (val) => {
     setUserCode(val);
     setSavedStatus('saving');
     saveUserCode(problem.id, val);
     setTimeout(() => setSavedStatus('saved'), 400);
-  };
-
-  // Handle Tab key in code editor
-  const handleKeyDown = (e) => {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const start = e.target.selectionStart;
-      const end = e.target.selectionEnd;
-      const val = e.target.value;
-      const newVal = val.substring(0, start) + '    ' + val.substring(end);
-      setUserCode(newVal);
-      saveUserCode(problem.id, newVal);
-      setTimeout(() => {
-        e.target.selectionStart = e.target.selectionEnd = start + 4;
-      }, 0);
-    }
   };
 
   // Save notes
@@ -265,8 +249,9 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
                 title="重置为模板代码"
                 onClick={() => {
                   if (confirm('是否重置为默认模板代码？')) {
-                    setUserCode(problem.codeTemplates.java);
-                    saveUserCode(problem.id, problem.codeTemplates.java);
+                    const template = problem.codeTemplates[activeLang] || problem.codeTemplates.java;
+                    setUserCode(template);
+                    saveUserCode(problem.id, template);
                   }
                 }}
               >
@@ -277,14 +262,13 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
             </div>
           </div>
 
-          <div className="practice-panel-body" style={{ padding: 0 }}>
+          <div className="practice-panel-body" style={{ padding: 0, display: 'flex', flexDirection: 'column' }}>
             {activeRightTab === 'code' ? (
-              <textarea
-                className="code-editor-textarea"
-                placeholder="// 在此输入你默写的算法代码... (支持 Tab 缩进)"
+              <CodeEditor
                 value={userCode}
+                language={activeLang}
                 onChange={handleCodeChange}
-                onKeyDown={handleKeyDown}
+                placeholder="// 在此输入你默写的算法代码... (支持符号自动补全、Tab 缩进与智能代码提示)"
               />
             ) : (
               <textarea
