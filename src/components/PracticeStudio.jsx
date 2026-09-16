@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Eye, EyeOff, Copy, Check, ExternalLink, Code2, FileText, Sparkles, RotateCcw } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Eye, EyeOff, Copy, Check, ExternalLink, Code2, FileText, Sparkles, RotateCcw, WrapText } from 'lucide-react';
 import { loadUserCodeMap, saveUserCode, loadUserNotesMap, saveUserNotes, calculateSM2 } from '../services/storage';
 import { CodeBlock } from './CodeBlock';
 import { CodeEditor } from './CodeEditor';
@@ -12,6 +12,70 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
   
   // Right panel tabs: 'code' | 'notes'
   const [activeRightTab, setActiveRightTab] = useState('code');
+
+  // Line wrapping toggle (default true to eliminate horizontal scrolling)
+  const [wrapLines, setWrapLines] = useState(() => {
+    return localStorage.getItem('practice_wrap_lines') !== 'false';
+  });
+
+  const toggleWrapLines = () => {
+    setWrapLines((prev) => {
+      const next = !prev;
+      localStorage.setItem('practice_wrap_lines', String(next));
+      return next;
+    });
+  };
+
+  // Resizable split layout
+  const [splitRatio, setSplitRatio] = useState(() => {
+    const saved = localStorage.getItem('practice_split_ratio');
+    return saved ? Math.min(75, Math.max(25, parseFloat(saved))) : 46;
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef(null);
+  const splitRatioRef = useRef(splitRatio);
+  splitRatioRef.current = splitRatio;
+
+  const handleSplitterPointerDown = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleSplitterReset = () => {
+    setSplitRatio(46);
+    localStorage.setItem('practice_split_ratio', '46');
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handlePointerMove = (e) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const containerWidth = rect.width;
+      if (containerWidth <= 0) return;
+
+      const offsetX = e.clientX - rect.left;
+      const rawPercent = (offsetX / containerWidth) * 100;
+
+      const minPercent = Math.max(20, (260 / containerWidth) * 100);
+      const maxPercent = Math.min(80, 100 - (300 / containerWidth) * 100);
+      const clamped = Math.min(Math.max(rawPercent, minPercent), maxPercent);
+      setSplitRatio(clamped);
+    };
+
+    const handlePointerUp = () => {
+      setIsDragging(false);
+      localStorage.setItem('practice_split_ratio', splitRatioRef.current.toFixed(1));
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+  }, [isDragging]);
 
   // User inputs
   const [userCode, setUserCode] = useState('');
@@ -97,10 +161,16 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
         </a>
       </div>
 
-      {/* Main Practice 2-Column Grid */}
-      <div className="practice-container">
+      {/* Main Practice Resizable Split Container */}
+      <div 
+        ref={containerRef}
+        className={`practice-container ${isDragging ? 'is-resizing' : ''}`}
+      >
         {/* Left Column: Problem & Standard Solution */}
-        <div className="practice-panel">
+        <div 
+          className="practice-panel practice-panel-left"
+          style={{ width: `${splitRatio}%` }}
+        >
           <div className="practice-panel-header">
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
@@ -198,8 +268,18 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
           </div>
         </div>
 
+        {/* Draggable Splitter Divider */}
+        <div
+          className="practice-splitter"
+          onPointerDown={handleSplitterPointerDown}
+          onDoubleClick={handleSplitterReset}
+          title="按住拖拽调节左右宽度，双击重置为 1:1 分栏"
+        >
+          <div className="practice-splitter-handle" />
+        </div>
+
         {/* Right Column: Interactive Code Editor & My Notes */}
-        <div className="practice-panel">
+        <div className="practice-panel practice-panel-right">
           <div className="practice-panel-header">
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <button
@@ -243,7 +323,33 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
               </button>
             </div>
 
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {activeRightTab === 'code' && (
+                <button
+                  type="button"
+                  style={{
+                    background: wrapLines ? 'rgba(0, 113, 227, 0.08)' : 'transparent',
+                    border: '1px solid',
+                    borderColor: wrapLines ? 'rgba(0, 113, 227, 0.25)' : 'transparent',
+                    color: wrapLines ? 'var(--apple-blue)' : 'var(--text-muted)',
+                    borderRadius: '4px',
+                    padding: '0.2rem 0.45rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    fontSize: '0.75rem',
+                    fontWeight: wrapLines ? 600 : 400,
+                    transition: 'all 0.15s ease'
+                  }}
+                  title={wrapLines ? '当前已开启自动换行（长代码边缘折行，消除横向滚动条）' : '当前已关闭自动换行（长代码横向延伸）'}
+                  onClick={toggleWrapLines}
+                >
+                  <WrapText size={13} />
+                  <span>{wrapLines ? '自动换行' : '不换行'}</span>
+                </button>
+              )}
+
               <button
                 style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}
                 title="重置为模板代码"
@@ -268,6 +374,7 @@ export function PracticeStudio({ problem, progress, onSaveProgress, onBack, queu
                 value={userCode}
                 language={activeLang}
                 onChange={handleCodeChange}
+                wrapLines={wrapLines}
                 placeholder="// 在此输入你默写的算法代码... (支持符号自动补全、Tab 缩进与智能代码提示)"
               />
             ) : (

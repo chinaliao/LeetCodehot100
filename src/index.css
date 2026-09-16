@@ -284,17 +284,16 @@ body {
 
 /* Practice Studio Layout */
 .practice-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: row;
   height: calc(100vh - 120px);
+  gap: 0;
+  position: relative;
 }
 
-@media (max-width: 900px) {
-  .practice-container {
-    grid-template-columns: 1fr;
-    height: auto;
-  }
+.practice-container.is-resizing {
+  user-select: none;
+  cursor: col-resize;
 }
 
 .practice-panel {
@@ -305,6 +304,67 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   overflow: hidden;
+  height: 100%;
+}
+
+.practice-panel-left {
+  flex-shrink: 0;
+}
+
+.practice-panel-right {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* Draggable Splitter Divider */
+.practice-splitter {
+  width: 14px;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 10;
+  user-select: none;
+  touch-action: none;
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+
+.practice-splitter:hover,
+.practice-container.is-resizing .practice-splitter {
+  background: rgba(0, 113, 227, 0.08);
+}
+
+.practice-splitter-handle {
+  width: 4px;
+  height: 38px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.practice-splitter:hover .practice-splitter-handle,
+.practice-container.is-resizing .practice-splitter-handle {
+  background: var(--apple-blue);
+  height: 56px;
+  box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.25);
+}
+
+@media (max-width: 900px) {
+  .practice-container {
+    flex-direction: column !important;
+    height: auto !important;
+    gap: 1.25rem !important;
+  }
+  .practice-splitter {
+    display: none !important;
+  }
+  .practice-panel {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+  }
 }
 
 .practice-panel-header {
@@ -632,7 +692,7 @@ body {
   }
 
   .practice-container {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     height: auto;
     gap: 1.25rem;
   }

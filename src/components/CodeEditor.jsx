@@ -98,12 +98,16 @@ const appleLightHighlightStyle = HighlightStyle.define([
   { tag: t.invalid, color: '#dc2626' },
 ]);
 
-export function CodeEditor({ value, onChange, language = 'java', placeholder = '' }) {
+export function CodeEditor({ value, onChange, language = 'java', placeholder = '', wrapLines = true }) {
   const extensions = useMemo(() => {
     const exts = [
       appleLightTheme,
       syntaxHighlighting(appleLightHighlightStyle),
     ];
+
+    if (wrapLines) {
+      exts.push(EditorView.lineWrapping);
+    }
 
     if (language === 'python') {
       exts.push(python());
@@ -112,7 +116,7 @@ export function CodeEditor({ value, onChange, language = 'java', placeholder = '
     }
 
     return exts;
-  }, [language]);
+  }, [language, wrapLines]);
 
   return (
     <div className="code-editor-container">
